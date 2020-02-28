@@ -7,6 +7,7 @@ Part of the music player detached from Light player.
 >由于时间原因，抽离音频播放模块单独开发  
 >时间主要花在了UI设计，动画与交互设计与性能优化等方面  
 >目前仅支持Android
+>由于魅族Flyme对Android底层进行了修改，导致无法正常获取本地歌曲封面
 
 Demo：[下载 APK-Demo](preview/light_music.apk)
 
