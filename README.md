@@ -49,5 +49,3 @@ flutter_audio_query|获取本地音乐信息。目前仅支持Android
 flushbar|消息弹窗
 sqflite|本地数据库 (暂未使用)
 flutter_staggered_grid_view|瀑布流
-
->菜鸟一只，欢迎交流
