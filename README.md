@@ -22,6 +22,7 @@ Demo：[下载 APK-Demo](preview/light_music.apk)
 * 完成本地存储
 * 优化音乐扫描速度
 * 添加对IOS的支持
+* 添加对.flac的支持
 * 优化性能
 
 图片预览 | - | - |
