@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/helpers/local_music_helper.dart';
-import 'package:light_player/auxiliary/loaders/color_loader_4.dart';
-import 'package:light_player/auxiliary/others/app_local.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
+import 'package:light_player/helpers/app_local.dart';
+import 'package:light_player/helpers/local_music_helper.dart';
 import 'package:light_player/objects/lp_music.dart';
+import 'package:light_player/util/app_util.dart';
+import 'package:light_player/widgets/lp_loader4.dart';
+import 'package:music_player/music_player.dart';
 
 import '../../music_item.dart';
 
@@ -90,7 +89,11 @@ class _SongListState extends State<SongList> {
                       children: <Widget>[
                         MusicItem(
                           index: index,
-                          currentMusicList: _musicList,
+                          playQueue: PlayQueue(
+                              queueId: "album",
+                              queueTitle: "AlbumList",
+                              queue: _musicList),
+                          music: _musicList[index],
                         ),
                         const SizedBox(height: 16),
                       ],
@@ -106,7 +109,11 @@ class _SongListState extends State<SongList> {
                 itemCount: _musicList.length,
                 itemBuilder: (context, index) => MusicItem(
                   index: index,
-                  currentMusicList: _musicList,
+                  playQueue: PlayQueue(
+                      queueId: "album",
+                      queueTitle: "AlbumList",
+                      queue: _musicList),
+                  music: _musicList[index],
                 ),
                 separatorBuilder: (context, index) =>
                     const SizedBox(height: 16),
@@ -229,29 +236,11 @@ class _SongListState extends State<SongList> {
     return widget.artistInfo == null
         ? SliverFillRemaining(
             child: Center(
-              child: BlocBuilder<StyleBloc, StyleMag>(
-                builder: (c, s) {
-                  return ColorLoader4(
-                    dotOneColor: Theme.of(context).accentColor,
-                    dotTwoColor: Theme.of(context).textTheme.display4.color,
-                    dotThreeColor: Theme.of(context).textTheme.display3.color,
-                    radius: s.style.globalRadius / 10 * 2,
-                  );
-                },
-              ),
+              child: const LpLoader4(),
             ),
           )
         : Center(
-            child: BlocBuilder<StyleBloc, StyleMag>(
-              builder: (c, s) {
-                return ColorLoader4(
-                  dotOneColor: Theme.of(context).accentColor,
-                  dotTwoColor: Theme.of(context).textTheme.display4.color,
-                  dotThreeColor: Theme.of(context).textTheme.display3.color,
-                  radius: s.style.globalRadius / 10 * 2,
-                );
-              },
-            ),
+            child: const LpLoader4(),
           );
   }
 }

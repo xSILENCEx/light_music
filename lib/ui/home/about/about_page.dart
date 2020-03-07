@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:light_player/auxiliary/bloc/app_bloc.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/others/app_local.dart';
+import 'package:light_player/bloc/app_bloc.dart';
+import 'package:light_player/bloc/style_bloc.dart';
+import 'package:light_player/helpers/app_local.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({Key key}) : super(key: key);

@@ -1,40 +1,41 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:light_player/auxiliary/bloc/playing_bloc.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/others/app_local.dart';
-import 'package:light_player/auxiliary/others/font_icon.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
+import 'package:light_player/bloc/playing_bloc.dart';
+import 'package:light_player/bloc/style_bloc.dart';
+import 'package:light_player/helpers/app_local.dart';
+import 'package:light_player/helpers/font_icon.dart';
 import 'package:light_player/objects/lp_music.dart';
 import 'package:light_player/objects/lp_style.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:light_player/util/app_util.dart';
+import 'package:music_player/music_player.dart';
 
 ///音乐项
 class MusicItem extends StatelessWidget {
   const MusicItem({
     Key key,
     @required this.index,
-    @required this.currentMusicList,
+    @required this.playQueue,
+    @required this.music,
   }) : super(key: key);
 
   ///索引
   final int index;
 
   ///当前界面的音乐列表
-  final List<LpMusic> currentMusicList;
+  final PlayQueue playQueue;
+
+  ///音乐信息
+  final LpMusic music;
 
   @override
   Widget build(BuildContext context) => _innerBox(context);
 
   ///播放该曲目
-  Future<void> _play(BuildContext context) async =>
-      await BlocProvider.of<PlayBloc>(context).play(
-        currentMusicList[index],
-        isAuto: false,
-        list: currentMusicList,
-      );
+  Future<void> _play(BuildContext context, bool isPlaying) async {
+    await BlocProvider.of<PlayBloc>(context)
+        .play(music: music, playQueue: playQueue, isAuto: false);
+  }
 
   ///显示选项菜单
   _showOption(BuildContext context) {
@@ -78,7 +79,7 @@ class MusicItem extends StatelessWidget {
   }
 
   ///头部控件
-  Widget _leadingState(BuildContext context, LpStyle style, bool isSame) {
+  Widget _leadingState(BuildContext context, LpStyle style, bool isPlaying) {
     final List<Widget> _leadings = [
       ///常态显示数字
       Container(
@@ -128,25 +129,16 @@ class MusicItem extends StatelessWidget {
         alignment: Alignment.center,
         width: Lp.w(120),
         height: Lp.w(120),
-        child: CircularPercentIndicator(
-          radius: 40,
-          percent: 0.6,
-          animation: true,
-          progressColor: Theme.of(context).accentColor,
-          backgroundColor: Colors.transparent,
-          addAutomaticKeepAlive: false,
-          animateFromLastPercent: true,
-          circularStrokeCap: CircularStrokeCap.round,
-        ),
+        color: Colors.black,
       ),
     ];
 
-    if (isSame) {
-      final AudioPlayerState state =
-          BlocProvider.of<PlayBloc>(context).getAudioPlayerState;
+    if (isPlaying) {
+      final PlayerState state =
+          BlocProvider.of<PlayBloc>(context).getPlayer.playbackState.state;
 
       //如果正在播放
-      if (state == AudioPlayerState.PLAYING) return _leadings[1];
+      if (state == PlayerState.Playing) return _leadings[1];
 
       //其它情况
       return _leadings[2];
@@ -156,7 +148,7 @@ class MusicItem extends StatelessWidget {
   }
 
   ///尾标
-  Widget _trailing(BuildContext context, LpStyle s, bool isSame) {
+  Widget _trailing(BuildContext context, LpStyle s, bool isPlaying) {
     ///每种类型的图标
     final List<IconData> _source = [
       //Lp
@@ -182,8 +174,8 @@ class MusicItem extends StatelessWidget {
 
     return Material(
       animationDuration: const Duration(seconds: 1),
-      color: currentMusicList[index].pay
-          ? isSame
+      color: music.pay
+          ? isPlaying
               ? Theme.of(context).primaryColor
               : Theme.of(context).textTheme.display4.color
           : Theme.of(context).disabledColor,
@@ -194,18 +186,18 @@ class MusicItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Icon(
-              _source[currentMusicList[index].sourceType.index],
+              _source[music.sourceType.index],
               size: Lp.sp(28.0),
-              color: isSame
+              color: isPlaying
                   ? Theme.of(context).iconTheme.color
                   : Theme.of(context).primaryColor,
             ),
             Text(
-              _sourceTitle[currentMusicList[index].sourceType.index],
+              _sourceTitle[music.sourceType.index],
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: isSame
+                color: isPlaying
                     ? Theme.of(context).iconTheme.color
                     : Theme.of(context).primaryColor,
                 fontSize: Lp.sp(26.0),
@@ -218,11 +210,13 @@ class MusicItem extends StatelessWidget {
   }
 
   ///上层内容
-  Widget _innerBox(BuildContext context) => BlocBuilder<StyleBloc, StyleMag>(
-        builder: (c, s) => BlocBuilder<PlayBloc, PlayMag>(
+  Widget _innerBox(BuildContext context) {
+    return BlocBuilder<StyleBloc, StyleMag>(
+      builder: (c, s) {
+        return BlocBuilder<PlayBloc, PlayMag>(
           builder: (pc, play) {
-            final _isSame =
-                play.musicPlayer.currentMusic.isSame(currentMusicList[index]);
+            final bool _isSame =
+                play.musicPlayer.data?.mediaId == music.mediaId;
 
             return Material(
               clipBehavior: Clip.antiAlias,
@@ -235,48 +229,45 @@ class MusicItem extends StatelessWidget {
                 color: _isSame
                     ? Theme.of(context).accentColor
                     : Colors.transparent,
-                duration: Duration(milliseconds: 800),
+                duration: const Duration(milliseconds: 800),
                 curve: Curves.ease,
                 child: ListTile(
                   dense: false,
-                  enabled: currentMusicList[index].pay,
+                  enabled: music.pay,
                   contentPadding: EdgeInsets.symmetric(horizontal: Lp.w(30)),
                   leading: _leadingState(context, s.style, _isSame),
                   title: Text(
-                    currentMusicList[index].musicName,
+                    playQueue.queue[index].title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: play.musicPlayer.currentMusic
-                              .isSame(currentMusicList[index])
+                      color: _isSame
                           ? Theme.of(context).primaryColor
                           : Theme.of(context).iconTheme.color,
                       fontSize: Lp.sp(36.0),
-                      fontWeight: play.musicPlayer.currentMusic
-                              .isSame(currentMusicList[index])
-                          ? FontWeight.bold
-                          : null,
+                      fontWeight: _isSame ? FontWeight.bold : null,
                     ),
                   ),
                   subtitle: Text(
-                    currentMusicList[index].getSinger(),
+                    playQueue.queue[index].subtitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: play.musicPlayer.currentMusic
-                              .isSame(currentMusicList[index])
+                      color: _isSame
                           ? Theme.of(context).primaryColor.withOpacity(0.6)
                           : Theme.of(context).iconTheme.color.withOpacity(0.6),
                       fontSize: Lp.sp(30.0),
                     ),
                   ),
                   trailing: _trailing(context, s.style, _isSame),
-                  onTap: () async => await _play(context),
+                  onTap: () async => await _play(context, _isSame),
                   onLongPress: () => _showOption(context),
                 ),
               ),
             );
           },
-        ),
-      );
+        );
+      },
+    );
+  }
 }

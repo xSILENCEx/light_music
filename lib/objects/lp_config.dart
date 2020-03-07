@@ -35,6 +35,8 @@ class AppConfig {
   ///退出前确认
   bool confirmBeforeExit;
 
+  bool showFloatBtn;
+
   ///默认构造函数
   AppConfig({
     this.themeCode = 0,
@@ -45,6 +47,7 @@ class AppConfig {
     this.showNotificationBar = false,
     this.pushSwitch = true,
     this.confirmBeforeExit = true,
+    this.showFloatBtn = false,
   });
 
   ///从json创建AppConfig对象

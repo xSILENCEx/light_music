@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:light_player/auxiliary/bloc/playing_bloc.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
-import 'package:light_player/objects/lp_music.dart';
+import 'package:light_player/bloc/playing_bloc.dart';
+import 'package:light_player/util/app_util.dart';
 
 import 'play_and_pause_btn.dart';
 import 'play_page_indicator.dart';
@@ -20,8 +19,8 @@ class _PlayBtnState extends State<PlayBtn> {
   double _eX = 0.0;
 
   ///播放暂停
-  Future<void> _playPause(LpMusic music) async {
-    await BlocProvider.of<PlayBloc>(context).play(music);
+  Future<void> _playPause() async {
+    await BlocProvider.of<PlayBloc>(context).play();
   }
 
   ///下一曲
@@ -76,7 +75,7 @@ class _PlayBtnState extends State<PlayBtn> {
                 width: _centerSize,
                 height: _centerSize,
                 child: GestureDetector(
-                  onTap: () => _playPause(play.musicPlayer.currentMusic),
+                  onTap: () => _playPause(),
 
                   ///左滑右滑切歌
                   onHorizontalDragUpdate: (d) {

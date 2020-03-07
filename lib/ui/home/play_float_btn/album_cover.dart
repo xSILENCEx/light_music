@@ -1,11 +1,11 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:light_player/auxiliary/bloc/app_bloc.dart';
-import 'package:light_player/auxiliary/bloc/playing_bloc.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
-import 'package:light_player/objects/lp_music.dart';
+import 'package:light_player/bloc/app_bloc.dart';
+import 'package:light_player/bloc/playing_bloc.dart';
 import 'package:light_player/ui/music/play_list/play_list.dart';
+import 'package:light_player/util/app_util.dart';
+import 'package:light_player/widgets/lp_image.dart';
+import 'package:music_player/music_player.dart';
 
 ///封面轮播图
 class AlbumCover extends StatelessWidget {
@@ -14,8 +14,8 @@ class AlbumCover extends StatelessWidget {
   final double coverSize;
 
   ///播放暂停
-  Future<void> _playPause(LpMusic music, BuildContext context) async {
-    await BlocProvider.of<PlayBloc>(context).play(music);
+  Future<void> _playPause(BuildContext context) async {
+    await BlocProvider.of<PlayBloc>(context).play();
   }
 
   ///下一曲
@@ -50,9 +50,8 @@ class AlbumCover extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(0.2),
                   child: ClipOval(
-                    child: Lp.pic(
-                      context,
-                      play.musicPlayer.currentMusic?.coverUrl ?? "",
+                    child: LpImage(
+                      play.musicPlayer.data?.iconUri,
                       loadSize: Lp.w(30.0),
                     ),
                   ),
@@ -62,9 +61,7 @@ class AlbumCover extends StatelessWidget {
                 ClipOval(
                   child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 800),
-                    opacity: BlocProvider.of<PlayBloc>(context)
-                                .getAudioPlayerState ==
-                            AudioPlayerState.PLAYING
+                    opacity: play.musicPlayer.state == PlayerState.Playing
                         ? 0.0
                         : 1.0,
                     child: Container(
@@ -85,8 +82,7 @@ class AlbumCover extends StatelessWidget {
                 BlocBuilder<AppBloc, AppMag>(
                   builder: (c, app) {
                     return GestureDetector(
-                      onTap: () =>
-                          _playPause(play.musicPlayer.currentMusic, context),
+                      onTap: () => _playPause(context),
 
                       //双击进入播放界面
                       onDoubleTap: () {

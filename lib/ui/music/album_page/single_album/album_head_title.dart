@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
+import 'package:light_player/bloc/style_bloc.dart';
+import 'package:light_player/util/app_util.dart';
 
 ///专辑标题
 class AlbumHeadTitle extends StatefulWidget {

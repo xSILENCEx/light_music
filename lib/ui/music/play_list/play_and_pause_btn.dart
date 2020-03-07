@@ -1,8 +1,8 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:light_player/auxiliary/bloc/playing_bloc.dart';
+import 'package:light_player/bloc/playing_bloc.dart';
+import 'package:music_player/music_player.dart';
 
 ///播放按钮
 class PlayAndPauseBtn extends StatelessWidget {
@@ -27,10 +27,7 @@ class PlayAndPauseBtn extends StatelessWidget {
           height: centerSize - indicatorWidth,
           child: AnimatedOpacity(
             duration: const Duration(milliseconds: 800),
-            opacity: BlocProvider.of<PlayBloc>(context).getAudioPlayerState ==
-                    AudioPlayerState.PLAYING
-                ? 0.0
-                : 1.0,
+            opacity: play.musicPlayer.state != PlayerState.Playing ? 1.0 : 0.0,
             child: Material(
               borderRadius: BorderRadius.circular(1000),
               color: Theme.of(context).primaryColor,

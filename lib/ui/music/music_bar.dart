@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:light_player/auxiliary/others/app_local.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
+import 'package:light_player/helpers/app_local.dart';
+import 'package:light_player/util/app_util.dart';
 
 class MusicTabbar extends StatelessWidget {
   const MusicTabbar({Key key}) : super(key: key);

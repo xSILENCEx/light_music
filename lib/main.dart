@@ -1,16 +1,22 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:light_player/auxiliary/bloc/app_bloc.dart';
-import 'package:light_player/auxiliary/bloc/indicator_bloc.dart';
-import 'package:light_player/auxiliary/bloc/playing_bloc.dart';
-import 'package:light_player/auxiliary/bloc/search_bloc.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/bloc/theme_bloc.dart';
-import 'package:light_player/auxiliary/others/app_local.dart';
 import 'package:light_player/objects/lp_theme.dart';
 import 'package:light_player/ui/root/splash_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:light_player/util/dio_util.dart';
+import 'package:music_player/music_player.dart';
+
+import 'bloc/app_bloc.dart';
+import 'bloc/indicator_bloc.dart';
+import 'bloc/playing_bloc.dart';
+import 'bloc/search_bloc.dart';
+import 'bloc/style_bloc.dart';
+import 'bloc/theme_bloc.dart';
+import 'helpers/app_local.dart';
+import 'helpers/background.dart';
 
 void main() {
   //状态栏透明
@@ -19,6 +25,32 @@ void main() {
   SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
 
   runApp(MyApp());
+}
+
+//后台播放与通知
+@pragma("vm:entry-point")
+void playerBackgroundService() {
+  runBackgroundService(
+    playUriInterceptor: (mediaId, fallbackUrl) async {
+      return fallbackUrl;
+    },
+    imageLoadInterceptor: (metadata) async {
+      try {
+        ///解析网络图片流
+        if (metadata.iconUri.startsWith("http")) {
+          return await DioUtils.networkImageToByte(metadata.iconUri);
+        } else {
+          ///解析本地文件
+          return await File(metadata.iconUri).readAsBytes();
+        }
+      } catch (e) {
+        print('解析图片失败:$e');
+      }
+
+      return null;
+    },
+    playQueueInterceptor: LpPlayQueueInterceptor(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -177,7 +209,6 @@ class MyApp extends StatelessWidget {
   void _appInit(BuildContext context) async {
     await BlocProvider.of<ThemeBloc>(context).init();
     await BlocProvider.of<AppBloc>(context).init();
-    await BlocProvider.of<PlayBloc>(context).init();
     await BlocProvider.of<SearchBloc>(context).init();
   }
 }

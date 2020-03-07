@@ -1,3 +1,5 @@
+import 'package:music_player/music_player.dart';
+
 ///音乐类型
 ///* [local]本地音乐
 ///* [follow]随缘音乐
@@ -32,10 +34,7 @@ enum ListState { loading, list, empty, error }
 /// * [loading] 正在加载
 enum SearchState { musicList, history, empty, error, loading }
 
-class LpMusic {
-  ///音乐在播放器中的唯一标识
-  final String musicID;
-
+class LpMusic extends MusicMetadata {
   ///原始数据
   final Map originalData;
 
@@ -49,7 +48,7 @@ class LpMusic {
   final String songMid;
 
   ///名称
-  final String musicName;
+  final String songTitle;
 
   ///歌手
   final List<String> singers;
@@ -75,18 +74,14 @@ class LpMusic {
   ///是否收藏
   bool isCollection;
 
-  ///文件路径
-  String filePath;
-
   ///是否可用,默认为true:可用
   bool pay;
 
   LpMusic(
-    this.musicID,
     this.songMid,
     this.originalData,
     this.musicType,
-    this.musicName,
+    this.songTitle,
     this.singers,
     this.album,
     this.duration,
@@ -96,14 +91,23 @@ class LpMusic {
     this.downLoadState = DownLoadState.download,
     this.downloadProgress = 0.0,
     this.isCollection = false,
-    this.filePath,
     this.pay = true,
-  });
+  }) : super(
+          mediaId: songMid,
+          mediaUri: sourceUrl,
+          title: songTitle,
+          subtitle: singers
+              .toString()
+              .replaceAll(',', '/')
+              .replaceAll(']', '')
+              .replaceAll('[', ''),
+          duration: duration,
+          iconUri: coverUrl,
+        );
 
   ///生成默认音乐
   static LpMusic def() {
     return LpMusic(
-      'musicID',
       'songMid',
       {},
       MusicType.local,
@@ -130,4 +134,14 @@ class LpMusic {
   bool isSame(LpMusic music) {
     return music.songMid == this.songMid;
   }
+
+  ///获取播放需要的数据
+  MusicMetadata get metaData => MusicMetadata(
+        mediaId: songMid,
+        mediaUri: sourceUrl,
+        title: songTitle,
+        subtitle: getSinger(),
+        duration: duration,
+        iconUri: coverUrl,
+      );
 }

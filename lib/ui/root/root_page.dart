@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:light_player/auxiliary/bloc/app_bloc.dart';
-import 'package:light_player/auxiliary/bloc/playing_bloc.dart';
+import 'package:light_player/bloc/app_bloc.dart';
+import 'package:light_player/bloc/playing_bloc.dart';
 import 'package:light_player/objects/lp_config.dart';
 import 'package:light_player/ui/home/about/about_page.dart';
 import 'package:light_player/ui/home/feedback/feed_page.dart';
@@ -65,25 +65,25 @@ class RootPage extends StatelessWidget {
     BlocProvider.of<PlayBloc>(context).initContext(context);
 
     return WillPopScope(
-      child: Scaffold(
-        key: _drawKey,
-        backgroundColor: Theme.of(context).primaryColor,
-        drawer: const AppDrawer(),
-        body: BlocBuilder<AppBloc, AppMag>(
-          builder: (c, app) {
-            _jumpToPage(app.appConfig.nowFunc.index, _pageController);
-
-            ///堆叠页面
-            return PageView(
+      child: BlocBuilder<AppBloc, AppMag>(
+        builder: (c, app) {
+          _jumpToPage(app.appConfig.nowFunc.index, _pageController);
+          return Scaffold(
+            key: _drawKey,
+            backgroundColor: Theme.of(context).primaryColor,
+            drawer: const AppDrawer(),
+            body: PageView(
               scrollDirection: Axis.vertical,
               physics: NeverScrollableScrollPhysics(),
               controller: _pageController,
               children: _pages,
-            );
-          },
-        ),
-        floatingActionButton: const PlayFloatActionBtn(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+            ),
+            floatingActionButton:
+                app.appConfig.showFloatBtn ? const PlayFloatActionBtn() : null,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+          );
+        },
       ),
       onWillPop: () => _exit(context, _pageController),
     );

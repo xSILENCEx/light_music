@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
+import 'package:light_player/bloc/style_bloc.dart';
 import 'package:light_player/ui/home/play_float_btn/play_float_btn.dart';
+import 'package:light_player/util/app_util.dart';
+import 'package:light_player/widgets/lp_image.dart';
 
 import 'album_head_title.dart';
 import 'album_song_list.dart';
@@ -85,7 +86,7 @@ class SingleAlbum extends StatelessWidget {
                           borderRadius: BorderRadius.vertical(
                             bottom: Radius.circular(s.style.globalRadius),
                           ),
-                          child: Lp.pic(context, info.albumArt),
+                          child: LpImage(info.albumArt),
                         ),
                       );
                     },

@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/helpers/local_music_helper.dart';
-import 'package:light_player/auxiliary/loaders/color_loader_4.dart';
-import 'package:light_player/auxiliary/loaders/color_loader_5.dart';
-import 'package:light_player/auxiliary/others/app_local.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
+import 'package:light_player/bloc/style_bloc.dart';
+import 'package:light_player/helpers/app_local.dart';
+import 'package:light_player/helpers/local_music_helper.dart';
 import 'package:light_player/objects/lp_music.dart';
 import 'package:light_player/ui/home/play_float_btn/play_float_btn.dart';
 import 'package:light_player/ui/music/album_page/single_album/album_song_list.dart';
+import 'package:light_player/util/app_util.dart';
+import 'package:light_player/widgets/lp_loader4.dart';
+import 'package:light_player/widgets/lp_loader5.dart';
 
 import 'art_tab_item.dart';
 
@@ -123,17 +123,7 @@ class _SingerPageState extends State<SingerPage> {
           controller: _pageController,
           itemBuilder: (c, index) => _tabListState == ListState.loading
               ? Center(
-                  child: BlocBuilder<StyleBloc, StyleMag>(
-                    builder: (c, s) {
-                      return ColorLoader4(
-                        dotOneColor: Theme.of(context).accentColor,
-                        dotTwoColor: Theme.of(context).textTheme.display4.color,
-                        dotThreeColor:
-                            Theme.of(context).textTheme.display3.color,
-                        radius: s.style.globalRadius / 10 * 2,
-                      );
-                    },
-                  ),
+                  child: const LpLoader4(),
                 )
               : SongList(artistInfo: _singerList[index]),
         ),
@@ -309,16 +299,7 @@ class _SingerPageState extends State<SingerPage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(s.style.globalRadius),
               ),
-              child: BlocBuilder<StyleBloc, StyleMag>(
-                builder: (c, s) {
-                  return ColorLoader5(
-                    dotOneColor: Theme.of(context).accentColor,
-                    dotTwoColor: Theme.of(context).textTheme.display4.color,
-                    dotThreeColor: Theme.of(context).textTheme.display3.color,
-                    radius: s.style.globalRadius / 10 * 2,
-                  );
-                },
-              ),
+              child: const LpLoader5(),
               onPressed: () => null,
             );
           },

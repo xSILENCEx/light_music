@@ -3,9 +3,9 @@ import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart'
     as extended;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:light_player/auxiliary/bloc/app_bloc.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
+import 'package:light_player/bloc/app_bloc.dart';
 import 'package:light_player/objects/lp_music.dart';
+import 'package:light_player/util/app_util.dart';
 
 import 'music_bar.dart';
 import 'music_func.dart';
@@ -74,9 +74,7 @@ class MusicPage extends StatelessWidget {
           ),
         ),
       ],
-      body: TabBarView(
-        children: _views,
-      ),
+      body: TabBarView(children: _views),
     );
   }
 }

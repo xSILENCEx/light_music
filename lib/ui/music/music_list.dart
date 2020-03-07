@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:light_player/auxiliary/bloc/app_bloc.dart';
-import 'package:light_player/auxiliary/bloc/playing_bloc.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/helpers/follow_music_helper.dart';
-import 'package:light_player/auxiliary/helpers/local_music_helper.dart';
-import 'package:light_player/auxiliary/loaders/color_loader_4.dart';
-import 'package:light_player/auxiliary/others/app_local.dart';
-import 'package:light_player/auxiliary/others/font_icon.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
+import 'package:light_player/bloc/app_bloc.dart';
+import 'package:light_player/bloc/playing_bloc.dart';
+import 'package:light_player/helpers/follow_music_helper.dart';
+import 'package:light_player/helpers/local_music_helper.dart';
 import 'package:light_player/objects/lp_config.dart';
 import 'package:light_player/objects/lp_music.dart';
+import 'package:light_player/util/app_util.dart';
+import 'package:light_player/widgets/lp_empty_widget.dart';
+import 'package:light_player/widgets/lp_error_widget.dart';
+import 'package:light_player/widgets/lp_loader4.dart';
+import 'package:music_player/music_player.dart';
 
 import 'music_item.dart';
 
@@ -54,9 +54,15 @@ class _MusicListState extends State<MusicList>
       switch (widget.musicType) {
         case MusicType.local:
           _musicList = await LocalMusicHelper.getLocalMusicList();
-          if (!isRefresh) {
-            BlocProvider.of<PlayBloc>(context)
-                .reloadPlayList(_musicList, isInit: !isRefresh);
+          if (!isRefresh && _musicList.isNotEmpty) {
+            await BlocProvider.of<PlayBloc>(context).initFirstSong(
+              _musicList[0],
+              PlayQueue(
+                queueId: "${widget.musicType}List",
+                queueTitle: "Default playlist",
+                queue: _musicList,
+              ),
+            );
           }
           break;
         case MusicType.follow:
@@ -101,16 +107,7 @@ class _MusicListState extends State<MusicList>
     final List<Widget> _pages = <Widget>[
       ///正在加载页面
       Center(
-        child: BlocBuilder<StyleBloc, StyleMag>(
-          builder: (c, s) {
-            return ColorLoader4(
-              dotOneColor: Theme.of(context).accentColor,
-              dotTwoColor: Theme.of(context).textTheme.display4.color,
-              dotThreeColor: Theme.of(context).textTheme.display3.color,
-              radius: s.style.globalRadius / 10 * 2,
-            );
-          },
-        ),
+        child: const LpLoader4(),
       ),
 
       ///常规页面
@@ -130,44 +127,8 @@ class _MusicListState extends State<MusicList>
         header: _headerAndFooter(),
         onLoad: null,
         footer: null,
-        emptyWidget: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Icon(
-              FontIcons.feather4,
-              size: 100,
-              color: Theme.of(context).iconTheme.color.withOpacity(0.3),
-            ),
-            Divider(
-              color: Colors.transparent,
-            ),
-            Text(
-              AppL.of(context).translate('empty_info'),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: Lp.sp(36.0),
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).iconTheme.color.withOpacity(0.3),
-                height: 1.5,
-              ),
-            ),
-            Text(
-              'https://github.com/xSILENCEx/light_player',
-              style: TextStyle(
-                fontSize: Lp.sp(30.0),
-                color: Theme.of(context).iconTheme.color.withOpacity(0.3),
-                height: 3.0,
-              ),
-            ),
-            Divider(
-              height: Lp.w(100),
-              color: Colors.transparent,
-            ),
-          ],
-        ),
-        child: Center(),
+        emptyWidget: const EmptyWidget(),
+        child: const Center(),
       ),
 
       ///未知错误页面
@@ -178,45 +139,8 @@ class _MusicListState extends State<MusicList>
         header: _headerAndFooter(),
         onLoad: null,
         footer: null,
-        emptyWidget: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Icon(
-              FontIcons.feather4,
-              size: 100,
-              color: Theme.of(context).iconTheme.color.withOpacity(0.3),
-            ),
-            Divider(
-              color: Colors.transparent,
-            ),
-            Text(
-              AppL.of(context).translate('unknown_error'),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: Lp.sp(36.0),
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).iconTheme.color.withOpacity(0.3),
-                height: 1.5,
-              ),
-            ),
-            Text(
-              'https://github.com/xSILENCEx/light_player',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: Lp.sp(30.0),
-                color: Theme.of(context).iconTheme.color.withOpacity(0.3),
-                height: 3.0,
-              ),
-            ),
-            Divider(
-              height: Lp.w(100),
-              color: Colors.transparent,
-            ),
-          ],
-        ),
-        child: Center(),
+        emptyWidget: const LpErrorWidget(),
+        child: const Center(),
       ),
     ];
 
@@ -273,7 +197,12 @@ class _MusicListState extends State<MusicList>
           );
         return MusicItem(
           index: index,
-          currentMusicList: _musicList,
+          playQueue: PlayQueue(
+            queueId: "${widget.musicType}List",
+            queueTitle: "Default playlist",
+            queue: _musicList,
+          ),
+          music: _musicList[index],
         );
       },
       separatorBuilder: (BuildContext context, int index) =>
@@ -304,18 +233,7 @@ class _MusicListState extends State<MusicList>
                   ? Center()
                   : Padding(
                       padding: EdgeInsets.only(top: Lp.w(50.0)),
-                      child: BlocBuilder<StyleBloc, StyleMag>(
-                        builder: (c, s) {
-                          return ColorLoader4(
-                            dotOneColor: Theme.of(context).accentColor,
-                            dotTwoColor:
-                                Theme.of(context).textTheme.display4.color,
-                            dotThreeColor:
-                                Theme.of(context).textTheme.display3.color,
-                            radius: s.style.globalRadius / 10 * 2,
-                          );
-                        },
-                      ),
+                      child: const LpLoader4(),
                     );
             },
           )

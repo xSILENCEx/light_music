@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:light_player/auxiliary/bloc/app_bloc.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/bloc/theme_bloc.dart';
-import 'package:light_player/auxiliary/others/app_local.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
+import 'package:light_player/bloc/app_bloc.dart';
+import 'package:light_player/bloc/style_bloc.dart';
+import 'package:light_player/bloc/theme_bloc.dart';
+import 'package:light_player/helpers/app_local.dart';
 import 'package:light_player/objects/lp_style.dart';
+import 'package:light_player/util/app_util.dart';
 
 class SettingItem extends StatelessWidget {
   final int index;

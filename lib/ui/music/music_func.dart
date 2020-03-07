@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:light_player/auxiliary/bloc/search_bloc.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/others/app_local.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
+import 'package:light_player/bloc/search_bloc.dart';
+import 'package:light_player/bloc/style_bloc.dart';
+import 'package:light_player/helpers/app_local.dart';
 import 'package:light_player/objects/lp_music.dart';
 import 'package:light_player/objects/lp_style.dart';
 import 'package:light_player/ui/music/singer_page/singer_page.dart';
+import 'package:light_player/util/app_util.dart';
 
 import 'album_page/album_page.dart';
 import 'music_search/music_search.dart';
@@ -29,7 +29,7 @@ class MusicFunc extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             itemBuilder: (c, index) => _buildToolItem(c, index, s.style),
             separatorBuilder: (c, index) => const SizedBox(width: 20),
-            itemCount: 3,
+            itemCount: 4,
           ),
         );
       },
@@ -40,22 +40,35 @@ class MusicFunc extends StatelessWidget {
   Widget _buildToolItem(BuildContext context, int index, LpStyle style) {
     ///功能名称
     final _toolNames = [
+      AppL.of(context).translate('play_list'),
       AppL.of(context).translate('search'),
       AppL.of(context).translate('album'),
       AppL.of(context).translate('singer'),
     ];
 
     ///hero图片动画tag
-    const List<String> _tags = ['search', 'album', 'singer'];
+    const List<String> _tags = ['playlist', 'search', 'album', 'singer'];
 
     ///hero按钮动画tag
-    const List<String> _btnTags = ['search_box', 'album_box', 'singer_box'];
+    const List<String> _btnTags = [
+      'playlist_box',
+      'search_box',
+      'album_box',
+      'singer_box'
+    ];
 
     ///hero标题动画tag
-    const List<String> _titleTags = ['search_t', 'album_t', 'singer_t'];
+    const List<String> _titleTags = [
+      'playlist_t',
+      'search_t',
+      'album_t',
+      'singer_t'
+    ];
 
     ///功能页面
     List<Widget> _toolPages = [
+      //TODO 构建播放列表页面
+      const Scaffold(),
       const MusicSearch(),
       const AlbumPage(),
       const SingerPage(),

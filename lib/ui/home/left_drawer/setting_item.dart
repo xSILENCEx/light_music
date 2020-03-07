@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:light_player/auxiliary/bloc/app_bloc.dart';
-import 'package:light_player/auxiliary/bloc/playing_bloc.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/others/app_local.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
+import 'package:light_player/bloc/app_bloc.dart';
+import 'package:light_player/bloc/playing_bloc.dart';
+import 'package:light_player/bloc/style_bloc.dart';
+import 'package:light_player/helpers/app_local.dart';
 import 'package:light_player/objects/lp_config.dart';
+import 'package:light_player/util/app_util.dart';
 
 ///侧边栏选项
 class SelectItem extends StatelessWidget {
@@ -34,12 +34,12 @@ class SelectItem extends StatelessWidget {
         AppL.of(context).translate('quit_tips'),
         AppL.of(context).translate('tips').toUpperCase(),
         onCheck: () async {
-          await BlocProvider.of<PlayBloc>(context).desdroy();
+          await BlocProvider.of<PlayBloc>(context).destroy();
           SystemNavigator.pop();
         },
       );
     } else {
-      await BlocProvider.of<PlayBloc>(context).desdroy();
+      await BlocProvider.of<PlayBloc>(context).destroy();
       SystemNavigator.pop();
     }
 

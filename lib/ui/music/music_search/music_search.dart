@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:light_player/auxiliary/bloc/search_bloc.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/loaders/color_loader_4.dart';
-import 'package:light_player/auxiliary/others/app_local.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
+import 'package:light_player/bloc/search_bloc.dart';
+import 'package:light_player/bloc/style_bloc.dart';
+import 'package:light_player/helpers/app_local.dart';
 import 'package:light_player/objects/lp_music.dart';
 import 'package:light_player/objects/lp_style.dart';
 import 'package:light_player/ui/home/play_float_btn/play_float_btn.dart';
+import 'package:light_player/util/app_util.dart';
+import 'package:light_player/widgets/lp_loader4.dart';
+import 'package:music_player/music_player.dart';
 
 import '../music_item.dart';
 import 'music_search_header.dart';
@@ -90,7 +91,12 @@ class _MusicSearchState extends State<MusicSearch> {
                 children: <Widget>[
                   MusicItem(
                     index: index,
-                    currentMusicList: _resultList,
+                    playQueue: PlayQueue(
+                      queueId: "search",
+                      queueTitle: "Search list",
+                      queue: _resultList,
+                    ),
+                    music: _resultList[index],
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -197,16 +203,7 @@ class _MusicSearchState extends State<MusicSearch> {
         ///正在加载
         SliverFillRemaining(
           child: Center(
-            child: BlocBuilder<StyleBloc, StyleMag>(
-              builder: (c, s) {
-                return ColorLoader4(
-                  dotOneColor: Theme.of(context).accentColor,
-                  dotTwoColor: Theme.of(context).textTheme.display4.color,
-                  dotThreeColor: Theme.of(context).textTheme.display3.color,
-                  radius: s.style.globalRadius / 10 * 2,
-                );
-              },
-            ),
+            child: const LpLoader4(),
           ),
         ),
       ];

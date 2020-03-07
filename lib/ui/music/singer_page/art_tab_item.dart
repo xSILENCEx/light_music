@@ -3,9 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/others/app_local.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
+import 'package:light_player/bloc/style_bloc.dart';
+import 'package:light_player/helpers/app_local.dart';
+import 'package:light_player/util/app_util.dart';
+import 'package:light_player/widgets/lp_image.dart';
 
 ///有数据时的item
 class ArtTabItem extends StatefulWidget {
@@ -61,13 +62,13 @@ class _ArtTabItemState extends State<ArtTabItem> {
                 ),
                 child: Stack(
                   children: <Widget>[
-                    Lp.pic(context, widget.info.artistArtPath),
+                    LpImage(widget.info.artistArtPath),
                     Container(
                       alignment: Alignment.topLeft,
                       width: double.infinity,
                       height: double.infinity,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
+                      decoration: const BoxDecoration(
+                        gradient: const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [Colors.black, Colors.transparent],

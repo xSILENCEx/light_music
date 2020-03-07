@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:light_player/auxiliary/bloc/playing_bloc.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/others/app_local.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
-import 'package:light_player/objects/lp_music_player.dart';
+import 'package:light_player/bloc/playing_bloc.dart';
+import 'package:light_player/bloc/style_bloc.dart';
+import 'package:light_player/helpers/app_local.dart';
+import 'package:light_player/util/app_util.dart';
+import 'package:music_player/music_player.dart';
 
 ///工具栏
 class PlayToolBar extends StatefulWidget {
@@ -25,7 +25,7 @@ class _PlayToolBarState extends State<PlayToolBar> {
   @override
   void initState() {
     super.initState();
-    _controllerMode = SwiperController()..index = 0;
+    _controllerMode = SwiperController();
   }
 
   @override
@@ -60,35 +60,49 @@ class _PlayToolBarState extends State<PlayToolBar> {
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: BlocBuilder<PlayBloc, PlayMag>(builder: (c, play) {
-                    return Swiper(
-                      index: play.musicPlayer.mode.index,
-                      itemCount: 3,
-                      fade: 0.0,
-                      controller: _controllerMode,
-                      scrollDirection: Axis.vertical,
-                      physics: NeverScrollableScrollPhysics(),
-                      loop: true,
-                      duration: 800,
-                      onTap: null,
-                      itemBuilder: (c, index) {
-                        final List<IconData> _icons = [
-                          SimpleLineIcons.refresh,
-                          SimpleLineIcons.reload,
-                          SimpleLineIcons.shuffle,
-                        ];
-                        return Icon(
-                          _icons[index],
-                          color: Theme.of(context).accentColor,
-                          size: Lp.w(50.0),
-                        );
-                      },
-                      onIndexChanged: (index) {
-                        BlocProvider.of<PlayBloc>(context)
-                            .changePlayMode(PlayMode.values[index]);
-                      },
-                    );
-                  }),
+                  child: BlocBuilder<PlayBloc, PlayMag>(
+                    builder: (c, play) {
+                      final _modes = [
+                        PlayMode.sequence,
+                        PlayMode.single,
+                        PlayMode.shuffle,
+                      ];
+
+                      return Swiper(
+                        index: _modes.indexOf(
+                            BlocProvider.of<PlayBloc>(context).playMode),
+                        itemCount: 3,
+                        fade: 0.0,
+                        controller: _controllerMode,
+                        scrollDirection: Axis.vertical,
+                        physics: NeverScrollableScrollPhysics(),
+                        loop: true,
+                        duration: 800,
+                        onTap: null,
+                        itemBuilder: (c, index) {
+                          final List<IconData> _icons = [
+                            ///列表循环
+                            SimpleLineIcons.refresh,
+
+                            ///单曲循环
+                            SimpleLineIcons.reload,
+
+                            ///随机播放
+                            SimpleLineIcons.shuffle,
+                          ];
+                          return Icon(
+                            _icons[index],
+                            color: Theme.of(context).accentColor,
+                            size: Lp.w(50.0),
+                          );
+                        },
+                        onIndexChanged: (index) {
+                          BlocProvider.of<PlayBloc>(context)
+                              .changePlayMode(_modes[index]);
+                        },
+                      );
+                    },
+                  ),
                 ),
                 SizedBox(
                   width: Lp.w(250),

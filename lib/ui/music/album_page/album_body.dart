@@ -5,12 +5,13 @@ import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/helpers/local_music_helper.dart';
-import 'package:light_player/auxiliary/loaders/color_loader_5.dart';
-import 'package:light_player/auxiliary/others/app_local.dart';
-import 'package:light_player/auxiliary/util/app_util.dart';
+import 'package:light_player/bloc/style_bloc.dart';
+import 'package:light_player/helpers/app_local.dart';
+import 'package:light_player/helpers/local_music_helper.dart';
 import 'package:light_player/objects/lp_music.dart';
+import 'package:light_player/util/app_util.dart';
+import 'package:light_player/widgets/lp_image.dart';
+import 'package:light_player/widgets/lp_loader5.dart';
 
 import 'single_album/single_album.dart';
 
@@ -150,12 +151,7 @@ class _AlbumBodyState extends State<AlbumBody> {
                 height: double.infinity,
                 alignment: Alignment.center,
                 color: Colors.white.withOpacity(0.1),
-                child: ColorLoader5(
-                  dotOneColor: Theme.of(context).accentColor,
-                  dotTwoColor: Theme.of(context).textTheme.display4.color,
-                  dotThreeColor: Theme.of(context).textTheme.display3.color,
-                  radius: s.style.globalRadius / 10 * 2,
-                ),
+                child: const LpLoader5(),
               ),
             ),
           );
@@ -206,7 +202,7 @@ class _AlbumBodyState extends State<AlbumBody> {
                                       s.style.globalRadius * 0.8),
                                 ),
                                 padding: EdgeInsets.zero,
-                                child: Lp.pic(context, _info.albumArt),
+                                child: LpImage(_info.albumArt),
                                 onPressed: () => _openAlbum(_info, index),
                               ),
                             );

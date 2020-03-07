@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:light_player/auxiliary/bloc/playing_bloc.dart';
-import 'package:light_player/auxiliary/bloc/style_bloc.dart';
-import 'package:light_player/auxiliary/loaders/color_loader_4.dart';
+import 'package:light_player/bloc/playing_bloc.dart';
+import 'package:light_player/widgets/lp_loader4.dart';
 import 'package:photo_view/photo_view.dart';
 
 class CoverPage extends StatelessWidget {
@@ -17,19 +16,9 @@ class CoverPage extends StatelessWidget {
             elevation: 0.0,
             color: Colors.black,
             child: PhotoView(
-              imageProvider:
-                  NetworkImage(play.musicPlayer.currentMusic.coverUrl),
+              imageProvider: NetworkImage(play.musicPlayer.data.iconUri),
               loadingBuilder: (c, i) => Center(
-                child: BlocBuilder<StyleBloc, StyleMag>(
-                  builder: (c, s) {
-                    return ColorLoader4(
-                      dotOneColor: Theme.of(context).accentColor,
-                      dotTwoColor: Theme.of(context).textTheme.display4.color,
-                      dotThreeColor: Theme.of(context).textTheme.display3.color,
-                      radius: s.style.globalRadius / 10 * 2,
-                    );
-                  },
-                ),
+                child: const LpLoader4(),
               ),
               loadFailedChild: Image.asset(
                 'images/btn_empty.png',

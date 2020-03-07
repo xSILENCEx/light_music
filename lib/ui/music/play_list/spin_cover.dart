@@ -1,9 +1,10 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:light_player/auxiliary/bloc/playing_bloc.dart';
 
-import 'package:light_player/auxiliary/util/app_util.dart';
+import 'package:light_player/bloc/playing_bloc.dart';
+import 'package:light_player/util/app_util.dart';
+import 'package:light_player/widgets/lp_image.dart';
+import 'package:music_player/music_player.dart';
 
 class SpinCover extends StatefulWidget {
   const SpinCover({Key key}) : super(key: key);
@@ -38,10 +39,9 @@ class _SpinCoverState extends State<SpinCover>
     ));
   }
 
-  Future _startPaperAnimation() async {
+  Future _startPaperAnimation(bool isPlaying) async {
     try {
-      if (BlocProvider.of<PlayBloc>(context).getAudioPlayerState ==
-          AudioPlayerState.PLAYING) {
+      if (isPlaying) {
         await _animationCoverController.repeat().orCancel;
       } else {
         _animationCoverController.stop();
@@ -65,10 +65,10 @@ class _SpinCoverState extends State<SpinCover>
         padding: EdgeInsets.all(Lp.w(20.0)),
         child: ClipOval(
           child: BlocBuilder<PlayBloc, PlayMag>(builder: (c, play) {
-            _startPaperAnimation();
+            _startPaperAnimation(play.musicPlayer.state == PlayerState.Playing);
             return AnimatedBuilder(
               animation: _animationCoverController,
-              child: Lp.pic(context, play.musicPlayer.currentMusic.coverUrl),
+              child: LpImage(play.musicPlayer.data.iconUri),
               builder: (c, child) {
                 return Transform.rotate(
                   angle: _animationCover.value,
